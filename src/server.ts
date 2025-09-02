@@ -7,7 +7,7 @@ import OpenAI from 'openai';
 import { db } from './config/database.js';
 import { users ,chats } from './db/schema.js';
 import { eq } from 'drizzle-orm';
-// import { ChatCompletionMessageParam } from 'openai/resources';
+import type { ChatCompletionMessageParam } from 'openai/resources';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -102,6 +102,26 @@ app.post("/chat", async (req: Request, res: Response) => {
         .status(404)
         .json({ error: 'User not found in database, please register' });
     }
+
+
+     // Fetch users past messages for context
+    const chatHistory = await db
+      .select()
+      .from(chats)
+      .where(eq(chats.userId, userId))
+      .orderBy(chats.createdAt)
+      .limit(10);
+
+    // Format chat history for Open AI
+    const conversation: ChatCompletionMessageParam[] = chatHistory.flatMap(
+      (chat) => [
+        { role: 'user', content: chat.message },
+        { role: 'assistant', content: chat.reply },
+      ]
+    );
+
+    // Add latest user messages to the conversation
+    conversation.push({ role: 'user', content: message });
 
     const response = await openai.responses.create({
        model: "gpt-4o-mini",
