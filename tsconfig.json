@@ -3,7 +3,7 @@
   "compilerOptions": {
     // File Layout
     "rootDir": "./src",
-    "outDir": "./dist",
+    "outDir": "./src/dist",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
@@ -41,5 +41,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "exclude" : ["drizzle.config.ts"]
+  "exclude" : ["drizzle.config.ts"],
+  "include": ["src/**/*"],
+  "exclude": ["src/dist"]
 }
