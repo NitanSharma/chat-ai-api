@@ -35,6 +35,7 @@ app.post(
   '/register-user',
   async (req: Request, res: Response): Promise<any> => {
     const { name, email } = req.body;
+    console.log(req.body)
 
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required' });
@@ -155,7 +156,10 @@ app.post("/chat", async (req: Request, res: Response) => {
   }
 });
 
-
+// health route
+app.get("/health", (req : Request, res : Response) => {
+  res.status(200).json({ status: "OK", message: "Server is awake." });
+});
 
 // Get chat history for a user
 app.post('/get-messages', async (req: Request, res: Response): Promise<any> => {
